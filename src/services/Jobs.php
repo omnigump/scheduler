@@ -156,13 +156,13 @@ class Jobs extends Component
         $job->type = $type;
         $job->date = $date;
         $job->context = $context;
-        $job->settings = $settings;
+        $job->settings = Json::encode($settings);
 
         // Try and find an existing job
         $existingJob = JobRecord::find()->where([
             'type' => $job->type,
             'context' => $context,
-            'settings' => Json::encode($job->settings),
+            'settings' => $job->settings,
         ])->one();
 
         // If there is an existing job, update the model with its id
@@ -277,19 +277,13 @@ class Jobs extends Component
             return null;
         }
 
-        $job = new Job($jobRecord->toArray([
+        return new Job($jobRecord->toArray([
             'id',
             'type',
             'date',
             'context',
             'settings'
         ]));
-
-        if ($job->settings) {
-            $job->settings = Json::decode($job->settings);
-        }
-
-        return $job;
     }
 
 }
